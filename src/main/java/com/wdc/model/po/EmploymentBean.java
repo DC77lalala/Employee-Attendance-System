@@ -15,5 +15,6 @@ public class EmploymentBean {
     private String sex;
     private String eaddr;
     private String idcard;
+    private String password;
 
 }
