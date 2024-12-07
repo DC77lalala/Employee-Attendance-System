@@ -5,15 +5,21 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wdc.common.ErrorCode;
 import com.wdc.exception.BusinessException;
 import com.wdc.mapper.EmploymentMapper;
-import com.wdc.model.DTO.UserRegisterDTO;
+import com.wdc.model.dao.EmploymentRequestDTO;
+import com.wdc.model.dao.PostSignInRequestDTO;
+import com.wdc.model.dao.UserRegisterDTO;
 import com.wdc.model.po.EmploymentBean;
-import com.wdc.model.po.UserBean;
+import com.wdc.model.po.SignIn;
 import com.wdc.service.IEmployService;
+import com.wdc.util.DateUtil;
+import com.wdc.util.RestResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * employ 的实现类
@@ -40,8 +46,8 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
         }
         //对密码加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
-        queryWrapper.eq("ename",userAccount);
-        queryWrapper.eq("password",userPassword);
+        queryWrapper.eq("ename", userAccount);
+        queryWrapper.eq("password", userPassword);
         long count = employmentMapper.selectCount(queryWrapper);
         if (count > 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
@@ -56,5 +62,49 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
             return null;
         }
         return employmentBean;
+    }
+
+    @Override
+    public RestResponse<SignIn> postSignIn(PostSignInRequestDTO postSignInRequestDTO) {
+        //获取当前时间
+        String today = DateUtil.today();
+//        Date dateTime = DateUtil.parse(today, "yyyy-MM-dd");
+
+
+        return null;
+    }
+
+    @Override
+    public EmploymentBean update(EmploymentRequestDTO employmentRequestDTO, Long employId) {
+        QueryWrapper<EmploymentBean> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("eid", employId);
+        EmploymentBean employmentBean  = employmentMapper.selectOne(queryWrapper);
+        if (employmentBean  == null) return null;
+
+        BeanUtils.copyProperties(employmentRequestDTO, employmentBean);
+
+        int updateResult = employmentMapper.updateById(employmentBean);
+        if (updateResult > 0) {
+            return employmentBean;
+        } else {
+            return null;
+        }
+
+
+    }
+
+    @Override
+    public RestResponse<EmploymentBean> del(Long employId) {
+        QueryWrapper<EmploymentBean> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("eid", employId);
+        EmploymentBean employmentBean  = employmentMapper.selectOne(queryWrapper);
+        if (employmentBean  == null) return RestResponse.fail("员工不存在");
+        int i = employmentMapper.deleteById(employId);
+        if (i > 0) {
+            return RestResponse.ok(employmentBean);
+        } else {
+            return RestResponse.fail("删除失败");
+        }
+
     }
 }

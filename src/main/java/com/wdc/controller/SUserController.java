@@ -6,8 +6,8 @@ import com.wdc.common.BaseResponse;
 import com.wdc.common.ErrorCode;
 import com.wdc.common.ResultUtils;
 import com.wdc.exception.BusinessException;
-import com.wdc.model.DTO.UserLoginRequest;
-import com.wdc.model.DTO.UserRegisterDTO;
+import com.wdc.model.dao.UserLoginRequestDTO;
+import com.wdc.model.dao.UserRegisterDTO;
 import com.wdc.model.po.UserBean;
 import com.wdc.service.UserService;
 import com.wdc.util.RestResponse;
@@ -74,17 +74,17 @@ public class SUserController {
 
 
     @PostMapping("/login")
-    public BaseResponse<UserBean> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request){
-        if (userLoginRequest == null){
+    public BaseResponse<UserBean> userLogin(@RequestBody UserLoginRequestDTO userLoginRequestDTO, HttpServletRequest request){
+        if (userLoginRequestDTO == null){
             return ResultUtils.error(PARAMS_ERROR);
         }
-        String userAccount = userLoginRequest.getUloginname();
-        String userPassword = userLoginRequest.getUpassword();
+        String userAccount = userLoginRequestDTO.getUloginname();
+        String userPassword = userLoginRequestDTO.getUpassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
 
-        UserBean user = userService.userLogin(userLoginRequest,request);
+        UserBean user = userService.userLogin(userLoginRequestDTO,request);
         if (user == null){
             return ResultUtils.error(NOT_LOGIN,"登录失败");
         }

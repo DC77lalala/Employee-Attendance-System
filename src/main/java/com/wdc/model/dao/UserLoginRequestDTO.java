@@ -1,9 +1,9 @@
-package com.wdc.model.DTO;
+package com.wdc.model.dao;
 
 import lombok.Data;
 
 @Data
-public class UserLoginRequest {
+public class UserLoginRequestDTO {
     private String uloginname;
     private String upassword;
 }

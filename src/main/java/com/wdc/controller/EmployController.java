@@ -2,14 +2,21 @@ package com.wdc.controller;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.wdc.common.BaseResponse;
+import com.wdc.common.ErrorCode;
+import com.wdc.common.ResultUtils;
 import com.wdc.exception.BusinessException;
-import com.wdc.model.DTO.UserRegisterDTO;
+import com.wdc.model.dao.EmploymentRequestDTO;
+import com.wdc.model.dao.PostSignInRequestDTO;
+import com.wdc.model.dao.UserRegisterDTO;
 import com.wdc.model.po.EmploymentBean;
 import com.wdc.model.po.SignIn;
-import com.wdc.model.po.UserBean;
 import com.wdc.service.IEmployService;
 import com.wdc.util.RestResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -47,8 +54,48 @@ public class EmployController {
      * 员工签到打卡
      */
     @RequestMapping(value = "/sign/in", method = RequestMethod.POST)
-    public RestResponse<SignIn> postSignIn(@RequestBody PostSignInRequest postSignInRequest) {
+    public RestResponse<SignIn> postSignIn(@RequestBody PostSignInRequestDTO postSignInRequestDTO) {
+        return employService.postSignIn(postSignInRequestDTO);
+    }
 
+    /**
+     * 修改员工
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    public RestResponse<EmploymentBean> update(@RequestBody EmploymentRequestDTO employmentRequestDTO ,Long employId) {
+        EmploymentBean employment =  employService.update(employmentRequestDTO,employId);
+        return RestResponse.ok(employment);
+
+    }
+
+    /**
+     * 删除员工
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.GET)
+    public RestResponse<EmploymentBean> del(Long employId) {
+        return employService.del(employId);
+    }
+
+
+    /**
+     * 查询员工
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.GET)
+    public RestResponse<EmploymentBean> sel(Long employId) {
+        return employService.del(employId);
+    }
+
+    @RequestMapping(value = "/page",method = RequestMethod.GET)
+    public BaseResponse<Page<EmploymentBean>> listTeamsByPage(EmploymentRequestDTO employmentRequestDTO) {
+        if (employmentRequestDTO == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        EmploymentBean team = new EmploymentBean();
+        BeanUtils.copyProperties(employmentRequestDTO, team);
+        Page<EmploymentBean> page = new Page<>(employmentRequestDTO.getPageNum(), employmentRequestDTO.getPageSize());
+        QueryWrapper<EmploymentBean> queryWrapper = new QueryWrapper<>(team);
+        Page<EmploymentBean> resultPage = employService.page(page, queryWrapper);
+        return ResultUtils.success(resultPage);
     }
 
 

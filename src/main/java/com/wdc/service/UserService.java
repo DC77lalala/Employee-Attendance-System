@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wdc.common.ErrorCode;
 import com.wdc.exception.BusinessException;
 import com.wdc.mapper.UserMapper;
-import com.wdc.model.DTO.UserLoginRequest;
-import com.wdc.model.DTO.UserRegisterDTO;
+import com.wdc.model.dao.UserLoginRequestDTO;
+import com.wdc.model.dao.UserRegisterDTO;
 import com.wdc.model.po.UserBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -63,9 +63,9 @@ public class UserService extends ServiceImpl<UserMapper, UserBean> {
 
     }
 
-    public UserBean userLogin(UserLoginRequest userLoginRequest, HttpServletRequest request) {
-        String userAccount = userLoginRequest.getUloginname();
-        String userPassword = userLoginRequest.getUpassword();
+    public UserBean userLogin(UserLoginRequestDTO userLoginRequestDTO, HttpServletRequest request) {
+        String userAccount = userLoginRequestDTO.getUloginname();
+        String userPassword = userLoginRequestDTO.getUpassword();
         //1.校验
         if (StringUtils.isAnyBlank(userAccount,userPassword)){
             return null;
