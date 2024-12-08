@@ -7,6 +7,7 @@ import java.util.Date;
 @Data
 public class SignIn {
 
+
     private Long id;
     /**
      * 业务编码
@@ -15,7 +16,8 @@ public class SignIn {
     /**
      * 员工编号
      */
-    private String employId;
+    private String employIdcard;
+
     /**
      * 打卡人
      */
@@ -28,6 +30,8 @@ public class SignIn {
      * 签到地点
      */
     private String signAddress;
+
+
     /**
      * 签到日期（精确到日）
      */

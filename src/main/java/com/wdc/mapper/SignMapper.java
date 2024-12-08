@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface SignMapper extends BaseMapper<SignIn> {
+    void saveSignDate(SignIn signIn);
 }

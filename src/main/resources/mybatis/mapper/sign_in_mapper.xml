@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wdc.mapper.SignMapper">
+    <resultMap id="dataMap" type="com.wdc.model.po.SignIn">
+        <id column="id" property="id"/>
+        <result column="bu_no" property="buNo"/>
+        <result column="employ_idcard" property="employIdcard"/>
+        <result column="employ_name" property="employName"/>
+        <result column="sign_count" property="signCount"/>
+        <result column="sign_address" property="signAddress"/>
+        <result column="sign_in_date" property="signInDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+
+
+
+    </resultMap>
+    <insert id="saveSignDate" parameterType="com.wdc.model.po.SignIn">
+        insert into sign_in (bu_no,
+                             employ_idcard,
+                             employ_name,
+                             sign_address,
+                             sign_in_date,
+                             create_time,
+                             update_time)
+        values (#{buNo}, #{employIdcard}, #{employName}, #{signAddress}, now(),now(),now())
+
+
+    </insert>
+</mapper>

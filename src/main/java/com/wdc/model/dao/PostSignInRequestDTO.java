@@ -7,7 +7,7 @@ public class PostSignInRequestDTO {
     /**
      * 员工编号
      */
-    private String employId;
+    private Integer employId;
     /**
      * 打卡人
      */
@@ -16,6 +16,11 @@ public class PostSignInRequestDTO {
      * 签到地点
      */
     private String signAddress;
+    /**
+     * 员工编号
+     */
+    private String idcard;
+
 
 
 }

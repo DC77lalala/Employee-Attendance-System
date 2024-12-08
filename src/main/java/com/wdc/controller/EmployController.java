@@ -8,21 +8,22 @@ import com.wdc.common.BaseResponse;
 import com.wdc.common.ErrorCode;
 import com.wdc.common.ResultUtils;
 import com.wdc.exception.BusinessException;
-import com.wdc.model.dao.EmploymentRequestDTO;
-import com.wdc.model.dao.PostSignInRequestDTO;
-import com.wdc.model.dao.UserRegisterDTO;
+import com.wdc.model.dao.*;
 import com.wdc.model.po.EmploymentBean;
 import com.wdc.model.po.SignIn;
+import com.wdc.model.po.UserBean;
 import com.wdc.service.IEmployService;
+import com.wdc.service.ISignService;
 import com.wdc.util.RestResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import static com.wdc.common.ErrorCode.NULL_ERROR;
+import static com.wdc.common.ErrorCode.*;
 
 @RestController
 @RequestMapping("/employ")
@@ -32,23 +33,43 @@ public class EmployController {
 
     @Resource
     private IEmployService employService;
+    @Resource
+    private ISignService signService;
 
 
     /**
      * 增加员工
      */
-    @RequestMapping("/register")
-    public RestResponse<EmploymentBean> userRegister(@RequestBody UserRegisterDTO userRegisterRequest , HttpServletRequest request){
-        String userAccount = userRegisterRequest.getUloginname();
-        String userPassword = userRegisterRequest.getUpassword();
-        String checkPassword = userRegisterRequest.getCheckPassword();
+    @RequestMapping(value = "/register",method = RequestMethod.POST)
+    public RestResponse<EmploymentBean> userRegister(@RequestBody EmploymentRegisterDTO employmentRegisterDTO , HttpServletRequest request){
+        String userAccount = employmentRegisterDTO.getEname();
+        String userPassword = employmentRegisterDTO.getPassword();
+        String checkPassword = employmentRegisterDTO.getCheckPassword();
         if (StrUtil.isBlank(userAccount) || StrUtil.isBlank(userPassword) ||StrUtil.isBlank(checkPassword) ) {
             throw new BusinessException(NULL_ERROR);
         }
-        EmploymentBean user = employService.userRegister(userRegisterRequest,request);
+        EmploymentBean user = employService.userRegister(employmentRegisterDTO,request);
         return RestResponse.ok(user);
     }
 
+
+    @PostMapping("/login")
+    public RestResponse<EmploymentBean> userLogin(@RequestBody EmployLoginRequestDTO employLoginRequestDTO, HttpServletRequest request){
+        if (employLoginRequestDTO == null){
+            return RestResponse.fail("登录信息不明确");
+        }
+        String userAccount = employLoginRequestDTO.getIdcard();
+        String userPassword = employLoginRequestDTO.getPassword();
+        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
+            return RestResponse.fail("ErrorCode.PARAMS_ERROR");
+        }
+
+        EmploymentBean user = employService.userLogin(employLoginRequestDTO,request);
+        if (user == null){
+            return RestResponse.fail("NOT_LOGIN,登录失败");
+        }
+        return RestResponse.ok(user);
+    }
 
     /**
      * 员工签到打卡
@@ -62,28 +83,37 @@ public class EmployController {
      * 修改员工
      */
     @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public RestResponse<EmploymentBean> update(@RequestBody EmploymentRequestDTO employmentRequestDTO ,Long employId) {
-        EmploymentBean employment =  employService.update(employmentRequestDTO,employId);
-        return RestResponse.ok(employment);
+    public BaseResponse<Integer> updateUser(@RequestBody EmploymentBean employmentBean , HttpServletRequest request){
+        //1.校验参数是否为空
+        if (employmentBean == null){
+            throw new RuntimeException("参数错误");
+        }
+        //2.校验用户权限
+        //3.触发更新
+//        EmploymentBean loginUser = employService.getLoginUser(request);
 
+//        int result = employService.updateUser(employmentBean,loginUser);
+        int result = employService.updateB(employmentBean);
+        return ResultUtils.success(result);
     }
 
     /**
      * 删除员工
      */
-    @RequestMapping(value = "/update",method = RequestMethod.GET)
-    public RestResponse<EmploymentBean> del(Long employId) {
+    @RequestMapping(value = "/del",method = RequestMethod.GET)
+    public RestResponse<EmploymentBean> del( Long employId) {
         return employService.del(employId);
     }
 
 
-    /**
-     * 查询员工
-     */
-    @RequestMapping(value = "/update",method = RequestMethod.GET)
-    public RestResponse<EmploymentBean> sel(Long employId) {
-        return employService.del(employId);
-    }
+
+//    /**
+//     * 查询员工
+//     */
+//    @RequestMapping(value = "/sel",method = RequestMethod.GET)
+//    public RestResponse<EmploymentBean> sel(Long employId) {
+//        return employService.del(employId);
+//    }
 
     @RequestMapping(value = "/page",method = RequestMethod.GET)
     public BaseResponse<Page<EmploymentBean>> listTeamsByPage(EmploymentRequestDTO employmentRequestDTO) {

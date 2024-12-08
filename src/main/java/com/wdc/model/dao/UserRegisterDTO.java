@@ -6,5 +6,5 @@ import lombok.Data;
 public class UserRegisterDTO {
     private String uloginname;
     private String upassword;
-    private String CheckPassword;
+    private String checkPassword;
 }
