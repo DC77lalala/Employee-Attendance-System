@@ -1,4 +1,4 @@
-package com.wdc.model.dao;
+package com.wdc.model.DTO;
 
 import com.wdc.common.PageRequest;
 import lombok.Data;

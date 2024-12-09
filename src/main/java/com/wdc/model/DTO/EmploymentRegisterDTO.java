@@ -1,4 +1,4 @@
-package com.wdc.model.dao;
+package com.wdc.model.DTO;
 
 import lombok.Data;
 

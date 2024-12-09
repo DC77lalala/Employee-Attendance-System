@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @TableName("employment")
 public class EmploymentBean {
@@ -12,9 +14,15 @@ public class EmploymentBean {
     private Integer eid;
     private String ename;
     private Integer eage;
-    private String sex;
-    private String eaddr;
     private String idcard;
+    private String eaddr;
+    private String sex;
     private String password;
+    private String email;
+    private String phone;
+    private String bio;
+    private String department;
+    private Date creteTime;
+    private Date updateDate;
 
 }
