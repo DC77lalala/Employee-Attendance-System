@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import lombok.Data;
 
 import java.util.Date;
@@ -26,9 +28,11 @@ public class Leave {
     private String leaveType;
 
     @TableField(value = "start_time")
+    @JsonDeserialize(using = DateDeserializers.DateDeserializer.class)
     private Date startTime;
 
     @TableField(value = "end_time")
+    @JsonDeserialize(using = DateDeserializers.DateDeserializer.class)
     private Date endTime;
 
     @TableField(value = "reason")

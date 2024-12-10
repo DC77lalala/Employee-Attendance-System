@@ -4,6 +4,7 @@ import com.wdc.common.BaseResponse;
 import com.wdc.common.ErrorCode;
 import com.wdc.common.ResultUtils;
 import com.wdc.exception.BusinessException;
+import com.wdc.model.DTO.LeavePersonReqDTO;
 import com.wdc.model.po.EmploymentBean;
 import com.wdc.model.po.Leave;
 import com.wdc.service.IEmployService;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/leave")
 @CrossOrigin(origins = "*")
@@ -32,6 +35,24 @@ public class LeaveController {
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public BaseResponse<List<Leave>> applyLeave() {
         List<Leave> list = leaveService.list();
+        return ResultUtils.success(list);
+
+    }
+
+    /**
+     * 查询自己的请假记录
+     *
+     * @return
+     */
+    @RequestMapping(value = "/listPerson", method = RequestMethod.POST)
+    public BaseResponse<List<Leave>> leaveByPerson(@RequestBody LeavePersonReqDTO leaveReq, HttpServletRequest request) {
+        EmploymentBean loginUser = employService.getLoginUser(request);
+        log.info("loginUser: {} , leaveReq: {}", loginUser, leaveReq);
+        if (!Objects.equals(loginUser.getIdcard(), leaveReq.getIdcard())) {
+            throw new BusinessException(ErrorCode.NO_AUTH, "只能查询自己的请假记录");
+        }
+
+        List<Leave> list = leaveService.leaveByPerson(leaveReq);
         return ResultUtils.success(list);
 
     }

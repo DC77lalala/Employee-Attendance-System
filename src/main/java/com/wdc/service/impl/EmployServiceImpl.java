@@ -14,6 +14,7 @@ import com.wdc.model.po.SignIn;
 import com.wdc.service.IEmployService;
 import com.wdc.service.ISignService;
 import com.wdc.util.RestResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +33,7 @@ import static com.wdc.contant.UserConstant.USER_LOGIN_STATE;
  * employ 的实现类
  */
 @Service
+@Slf4j
 public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentBean> implements IEmployService {
 
     private static final String SALT = "wdc";
@@ -158,6 +160,7 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
         EmploymentBean safetyUser = getSafetyUser(user);
         //记录用户的登陆的状态
         request.getSession().setAttribute(USER_LOGIN_STATE,safetyUser);
+        log.info("存入 session 的用户: {} request: {}",safetyUser,request);
         return safetyUser;
 
     }
