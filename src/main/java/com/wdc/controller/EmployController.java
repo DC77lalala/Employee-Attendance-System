@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 import static com.wdc.common.ErrorCode.*;
 
 @RestController
@@ -127,6 +129,27 @@ public class EmployController {
         return ResultUtils.success(resultPage);
     }
 
+
+    /**
+     * 查询所有
+     * @return
+     */
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    public BaseResponse<Integer> getAllUser() {
+
+        List<EmploymentBean> list = employService.list();
+        return ResultUtils.success(list.size());
+
+    }
+
+
+    @RequestMapping(value = "/applyLeave",method = RequestMethod.GET)
+    public BaseResponse<Integer> applyLeave() {
+
+        List<EmploymentBean> list = employService.list();
+        return ResultUtils.success(list.size());
+
+    }
 
 
 
