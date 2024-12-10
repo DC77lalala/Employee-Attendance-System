@@ -34,8 +34,7 @@ public class EmployController {
 
     @Resource
     private IEmployService employService;
-    @Resource
-    private ISignService signService;
+
 
 
     /**
@@ -143,13 +142,7 @@ public class EmployController {
     }
 
 
-    @RequestMapping(value = "/applyLeave",method = RequestMethod.GET)
-    public BaseResponse<Integer> applyLeave() {
 
-        List<EmploymentBean> list = employService.list();
-        return ResultUtils.success(list.size());
-
-    }
 
 
 
