@@ -70,8 +70,11 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
         boolean saveResult = this.save(employmentBean);
         if (!saveResult) {
             return null;
+
         }
-        return employmentBean;
+        EmploymentBean loginEmploy = employmentMapper.selectById(employmentBean.getEid());
+
+        return getSafetyUser(loginEmploy);
     }
 
     @Override
@@ -89,24 +92,7 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
 
     }
 
-    @Override
-    public EmploymentBean updateBw(EmploymentRequestDTO employmentRequestDTO, Long employId) {
-        QueryWrapper<EmploymentBean> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("eid", employId);
-        EmploymentBean employmentBean  = employmentMapper.selectOne(queryWrapper);
-        if (employmentBean  == null) return null;
 
-        BeanUtils.copyProperties(employmentRequestDTO, employmentBean);
-
-        int updateResult = employmentMapper.updateById(employmentBean);
-        if (updateResult > 0) {
-            return employmentBean;
-        } else {
-            return null;
-        }
-
-
-    }
 
     @Override
     public RestResponse<EmploymentBean> del(Long employId) {
@@ -184,7 +170,12 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
         EmploymentBean safetyUser = new EmploymentBean();
         safetyUser.setIdcard(originUser.getIdcard());
         safetyUser.setEid(originUser.getEid());
+        safetyUser.setBio(originUser.getBio());
+        safetyUser.setDepartment(originUser.getDepartment());
+        safetyUser.setPhone(originUser.getPhone());
+        safetyUser.setEmail(originUser.getEmail());
         safetyUser.setEname(originUser.getEname());
+        safetyUser.setIsAdmin(originUser.getIsAdmin());
         safetyUser.setEaddr(originUser.getEaddr());
         safetyUser.setSex(originUser.getSex());
         safetyUser.setEage(originUser.getEage());

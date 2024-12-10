@@ -21,7 +21,6 @@ public interface IEmployService extends IService<EmploymentBean> {
      */
     RestResponse<SignIn> postSignIn(PostSignInRequestDTO postSignInRequestDTO);
 
-    EmploymentBean updateBw(EmploymentRequestDTO employmentRequestDTO,Long employId);
 
     RestResponse<EmploymentBean> del(Long employId);
 
