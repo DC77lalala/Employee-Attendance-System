@@ -2,13 +2,14 @@ package com.wdc.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wdc.common.ErrorCode;
-import com.wdc.contant.UserConstant;
 import com.wdc.exception.BusinessException;
 import com.wdc.mapper.EmploymentMapper;
 import com.wdc.model.DTO.EmployLoginRequestDTO;
 import com.wdc.model.DTO.EmploymentRegisterDTO;
-import com.wdc.model.DTO.EmploymentRequestDTO;
 import com.wdc.model.DTO.PostSignInRequestDTO;
 import com.wdc.model.po.EmploymentBean;
 import com.wdc.model.po.SignIn;
@@ -19,13 +20,14 @@ import com.wdc.util.RestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +49,17 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
     @Resource
     private IRedisService redisService;
 
+
+    @Value("${baidu.map.api.key}")
+    private String apiKey;
+
+
+    @Resource
+    private   RestTemplate restTemplate;
+
+
+    @Resource
+    private ObjectMapper objectMapper;
 
     @Override
     public EmploymentBean userRegister(EmploymentRegisterDTO employmentRegisterDTO, HttpServletRequest request) {
@@ -90,10 +103,32 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
 //        Date dateTime = DateUtil.parse(today, "yyyy-MM-dd");
          //转换数据
         SignIn signIn = new SignIn();
+
+        double latitude = postSignInRequestDTO.getLatitude();
+        double longitude = postSignInRequestDTO.getLongitude();
+
+        String url = "http://api.map.baidu.com/reverse_geocoding/v3/?ak=" + apiKey +
+                "&output=json&coordtype=wgs84ll&location=" + latitude + "," + longitude;
+        // 发送GET请求，获取API返回的地理信息
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        String body = response.getBody();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(body);
+
+            JsonNode resultNode = jsonNode.path("result");
+            String formattedAddress = resultNode.path("formatted_address").asText();
+
+            signIn.setSignAddress(formattedAddress);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
         signIn.setEmployIdcard(postSignInRequestDTO.getIdcard());
         signIn.setEmployName(postSignInRequestDTO.getEmployName());
-        signIn.setSignAddress(postSignInRequestDTO.getSignAddress());
-        signIn.setBuNo(RandomStringUtils.randomNumeric(11));
         return signService.saveSignDate(signIn);
 
     }

@@ -26,9 +26,8 @@ public class LeaveServiceImpl extends ServiceImpl<LeaveMapper, Leave> implements
     @Override
     public Leave updateState(Leave leaveReq) {
 
-        String idcard = leaveReq.getIdcard();
 
-        Leave leave = leaveMapper.selectOne(new QueryWrapper<Leave>().eq("idcard", idcard));
+        Leave leave = leaveMapper.selectOne(new QueryWrapper<Leave>().eq("id", leaveReq.getId()));
 
         if (leave == null) {
             throw new BusinessException(ErrorCode.NULL_ERROR, "未找到对应的请假记录");

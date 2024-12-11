@@ -87,7 +87,7 @@ public class LeaveController {
         leave.setStartTime(leaveReq.getStartTime());
         leave.setEndTime(leaveReq.getEndTime());
         leave.setReason(leaveReq.getReason());
-        leave.setStatus(leaveReq.getStatus());
+        leave.setStatus("待审核");
         leave.setIdcard(leaveReq.getIdcard());
 
         // 使用 MyBatis-Plus 插入数据

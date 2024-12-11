@@ -13,6 +13,7 @@ import com.wdc.model.po.EmploymentBean;
 import com.wdc.model.po.SignIn;
 import com.wdc.service.IEmployService;
 import com.wdc.service.ISignService;
+import com.wdc.service.impl.BaiduMapService;
 import com.wdc.util.RestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,9 @@ public class EmployController {
 
     @Resource
     private IEmployService employService;
+
+    @Resource
+    private BaiduMapService baiduMapService;
 
 
 
@@ -76,6 +80,7 @@ public class EmployController {
      */
     @RequestMapping(value = "/sign/in", method = RequestMethod.POST)
     public RestResponse<SignIn> postSignIn(@RequestBody PostSignInRequestDTO postSignInRequestDTO) {
+
         return employService.postSignIn(postSignInRequestDTO);
     }
 

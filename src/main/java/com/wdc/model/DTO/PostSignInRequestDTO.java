@@ -4,10 +4,7 @@ import lombok.Data;
 
 @Data
 public class PostSignInRequestDTO {
-    /**
-     * 员工编号
-     */
-    private Integer employId;
+
     /**
      * 打卡人
      */
@@ -20,6 +17,17 @@ public class PostSignInRequestDTO {
      * 员工编号
      */
     private String idcard;
+
+
+    /**
+     * 维度
+     */
+    private double latitude;
+
+    /**
+     * 精度
+     */
+    private double longitude;
 
 
 

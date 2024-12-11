@@ -9,6 +9,11 @@ spring:
     password: 123456
 
 
+baidu:
+  map:
+    api:
+      key: yDWEFmbipaDFMsm3W6xvQvJu8vm9C6ES
+
 
 redis:
   sdk:
