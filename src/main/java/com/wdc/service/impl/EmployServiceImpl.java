@@ -3,6 +3,7 @@ package com.wdc.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wdc.common.ErrorCode;
+import com.wdc.contant.UserConstant;
 import com.wdc.exception.BusinessException;
 import com.wdc.mapper.EmploymentMapper;
 import com.wdc.model.DTO.EmployLoginRequestDTO;
@@ -11,6 +12,7 @@ import com.wdc.model.DTO.EmploymentRequestDTO;
 import com.wdc.model.DTO.PostSignInRequestDTO;
 import com.wdc.model.po.EmploymentBean;
 import com.wdc.model.po.SignIn;
+import com.wdc.redis.IRedisService;
 import com.wdc.service.IEmployService;
 import com.wdc.service.ISignService;
 import com.wdc.util.RestResponse;
@@ -42,6 +44,8 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
 
     @Resource
     private ISignService signService;
+    @Resource
+    private IRedisService redisService;
 
 
     @Override
@@ -113,14 +117,8 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
 
     @Override
     public EmploymentBean getLoginUser(HttpServletRequest request) {
-        if (request == null){
-            return null;
-        }
+        Object userObj = redisService.getValue(USER_LOGIN_STATE);
 
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        if (userObj == null){
-            throw new BusinessException(ErrorCode.NO_AUTH);
-        }
         return (EmploymentBean) userObj;
     }
 
@@ -159,8 +157,10 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
         //用户脱敏
         EmploymentBean safetyUser = getSafetyUser(user);
         //记录用户的登陆的状态
-        request.getSession().setAttribute(USER_LOGIN_STATE,safetyUser);
-        log.info("存入 session 的用户: {} request: {}",safetyUser,request);
+
+        redisService.setValue(USER_LOGIN_STATE,safetyUser);
+
+        log.info("存入 session 的用户: {} ",safetyUser);
         return safetyUser;
 
     }

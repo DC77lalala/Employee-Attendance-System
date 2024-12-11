@@ -47,6 +47,9 @@ public class EmploymentBean {
     @TableField(value = "positions")
     private String positions;
 
+    @TableField(value = "avatar")
+    private String avatar;
+
     @TableField(value = "is_admin")
     private Integer isAdmin;
 
