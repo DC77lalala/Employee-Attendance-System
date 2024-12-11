@@ -182,6 +182,7 @@ public class EmployServiceImpl extends ServiceImpl<EmploymentMapper, EmploymentB
         safetyUser.setEaddr(originUser.getEaddr());
         safetyUser.setSex(originUser.getSex());
         safetyUser.setEage(originUser.getEage());
+        safetyUser.setAvatar(originUser.getAvatar());
 
         return safetyUser;
     }

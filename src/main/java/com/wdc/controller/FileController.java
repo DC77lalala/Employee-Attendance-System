@@ -2,13 +2,16 @@ package com.wdc.controller;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import com.wdc.common.BaseResponse;
 import com.wdc.common.ResultUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 
 @RestController
 @RequestMapping("/files")
@@ -49,5 +52,29 @@ public class FileController {
         return ResultUtils.success(http + flag + "-" + fileName);  //  http://localhost:9090/files/1697438073596-avatar.png
     }
 
+
+    /**
+     * 获取文件
+     *
+     * @param flag
+     * @param response
+     */
+    @GetMapping("/{flag}")   //  1697438073596-avatar.png
+    public void avatarPath(@PathVariable String flag, HttpServletResponse response) {
+        OutputStream os;
+        try {
+            if (StrUtil.isNotEmpty(flag)) {
+                response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(flag, "UTF-8"));
+                response.setContentType("application/octet-stream");
+                byte[] bytes = FileUtil.readBytes(filePath + flag);
+                os = response.getOutputStream();
+                os.write(bytes);
+                os.flush();
+                os.close();
+            }
+        } catch (Exception e) {
+            System.out.println("文件下载失败");
+        }
+    }
 
 }

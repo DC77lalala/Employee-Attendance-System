@@ -59,7 +59,7 @@ public class LeaveController {
 
 
     /**
-     * 查询所有请假记录
+     * update
      *
      * @return
      */
